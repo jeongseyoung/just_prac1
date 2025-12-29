@@ -1,0 +1,15 @@
+package com.example.mybatiscrudprac.domain.enumstore;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum PriceConditionEnum {
+    
+    MORE(">="),
+    LESS("<="),
+    EQUAL("=");
+
+    private final String sql;
+}

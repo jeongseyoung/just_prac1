@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.mybatiscrudprac.mapper.SearchMapper">
+
+    <select id="getuserlist" resultType="UserDto">
+      select userId, userName, userEmail
+      FROM user
+      ORDER BY userId DESC
+      LIMIT #{size} 
+      OFFSET #{offset}
+    </select>
+
+    <select id="getSearchList" resultType="UserDto">
+        SELECT userId, userName, userEmail
+        FROM user
+        <where>
+          <if test="status != null">
+            AND status = #{status}
+          </if>
+          <if test="keyword != null and keyword != ''">
+          <choose>
+            <when test="wh == 'userName'">
+              AND userName LIKE CONCAT('%', #{keyword}, '%')
+            </when>
+            <when test="wh == 'userEmail'">
+              AND userEmail LIKE CONCAT('%', #{keyword}, '%')
+            </when>
+            </choose>
+          </if>
+        </where>
+        ORDER BY
+        <choose>
+          <when test="sort == 'userName'">userName</when>
+          <when test="sort == 'userEmail'">userEmail</when>
+          <otherwise>userId</otherwise>
+        </choose>
+        <choose>
+          <when test="orderby == 'ASC'">ASC</when>
+          <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{size}
+        OFFSET #{offset}
+    </select>
+
+           <!--  zz             -->
+
+     <select id="getProductSearchList" resultType="ProductDto">
+      SELECT productId, productName, productPrice, productOrigin
+      FROM product
+      <where>
+          <if test="keyword != null and keyword != ''">
+            productName LIKE CONCAT('%', #{keyword}, '%')
+          </if>
+          <if test="searchPrice != null">
+            AND productPrice ${priceConditionEnum.sql} #{searchPrice}
+          </if>
+
+          <if test="productOrigin != null">
+            AND productOrigin = #{productOrigin}
+          </if>
+      </where>
+      ORDER BY productId ${orderByType}
+      LIMIT #{size}
+      OFFSET #{offset}
+     </select>
+
+     <select id="getProductSearchToTalCount" resultType="int">
+      SELECT COUNT(*)
+      FROM product
+      <where>
+          <if test="keyword != null and keyword != ''">
+            productName LIKE CONCAT('%', #{keyword}, '%')
+          </if>
+          <if test="searchPrice != null">
+            AND productPrice ${priceConditionEnum.sql} #{searchPrice}
+          </if>
+
+          <if test="productOrigin != null">
+            AND productOrigin = #{productOrigin}
+          </if>
+      </where>
+     </select>
+</mapper>
